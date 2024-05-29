@@ -85,7 +85,7 @@ const server = new aws.ec2.Instance("server", {
     ami: "ami-0faea24786f93f390",
     keyName: "MinecraftServerKey",
     tags: {
-        Name: "testPulumi",
+        Name: "MinecraftServerPulumi",
     },
 });
 
