@@ -3,7 +3,7 @@ import * as aws from "@pulumi/aws";
 
 // Get some configuration values or set default values.
 const config = new pulumi.Config();
-const instanceType = config.get("instanceType") || "t3.micro";
+const instanceType = config.get("instanceType") || "t3.small";
 const vpcNetworkCidr = config.get("vpcNetworkCidr") || "10.0.0.0/16";
 
 // Look up the latest Amazon Linux 2 AMI.
@@ -17,10 +17,7 @@ const ami = aws.ec2.getAmi({
 }).then(invoke => invoke.id);
 
 // User data to start a HTTP server in the EC2 instance
-const userData = `#!/bin/bash
-echo "Hello, World from Pulumi!" > index.html
-nohup python -m SimpleHTTPServer 80 &
-`;
+const userData = ``;
 
 // Create VPC.
 const vpc = new aws.ec2.Vpc("vpc", {
@@ -64,6 +61,12 @@ const secGroup = new aws.ec2.SecurityGroup("secGroup", {
         toPort: 25565,
         protocol: "tcp",
         cidrBlocks: ["0.0.0.0/0"],
+    },
+    {
+        fromPort: 22,
+        toPort: 22,
+        protocol: "tcp",
+        cidrBlocks: ["0.0.0.0/0"],
     }],
     egress: [{
         fromPort: 0,
@@ -75,11 +78,11 @@ const secGroup = new aws.ec2.SecurityGroup("secGroup", {
 
 // Create and launch an EC2 instance into the public subnet.
 const server = new aws.ec2.Instance("server", {
-    instanceType: instanceType,
+    instanceType: "t4g.small",
     subnetId: subnet.id,
     vpcSecurityGroupIds: [secGroup.id],
     userData: userData,
-    ami: ami,
+    ami: "ami-0faea24786f93f390",
     keyName: "MinecraftServerKey",
     tags: {
         Name: "testPulumi",
