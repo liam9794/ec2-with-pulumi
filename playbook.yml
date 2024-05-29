@@ -1,0 +1,10 @@
+---
+- name: Transfer and execute MinecraftServer script
+  hosts: webservers
+  remote_user: ec2-user
+  become: true
+  tasks:
+  - name: Transfer script
+    copy: src=MinecraftServer.sh dest=/home/ec2-user
+  - name: Execute script
+    command: bash /home/ec2-user/MinecraftServer.sh
